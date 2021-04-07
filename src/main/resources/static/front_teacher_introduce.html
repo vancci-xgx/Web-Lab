@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>导师介绍</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="import" href="top.html">
+    <link rel="import" href="footer.html">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="Learn Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+<link href="css/bootstrap-3.1.1.min.css" rel='stylesheet' type='text/css' />
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<!-- Custom Theme files -->
+<link href="css/style1.css" rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="css/jquery.countdown.css" />
+
+<!----font-Awesome----->
+<link href="css/font-awesome.css" rel="stylesheet"> 
+<!----font-Awesome----->
+<script>
+$(document).ready(function(){
+    $(".dropdown").hover(            
+        function() {
+            $('.dropdown-menu', this).stop( true, true ).slideDown("fast");
+            $(this).toggleClass('open');        
+        },
+        function() {
+            $('.dropdown-menu', this).stop( true, true ).slideUp("fast");
+            $(this).toggleClass('open');       
+        }
+    );
+});
+$(document).ready(function () {
+    $('#top1').load('top.html');
+    $('#footer').load('footer.html');
+});
+</script>
+</head>
+<body>
+<div id="top1"></div>
+<nav class="navbar navbar-default" role="navigation"></nav>
+<div class="courses_banner">
+    <div class="container">
+
+
+    </div>
+</div>
+<div class="grid_1">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="news ">
+                <h3 style="font-size: 2em;margin-top: 1em; text-align: center ;color: #005284">导师列表</h3>
+                <div class="section-content"  id="teacherList">
+
+
+                         </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+    <div class="footer" id="footer">
+
+    </div>
+
+</body>
+</html>
+
+<script>
+    $.get("/front/getTeacherList",{},function (data) {
+       if (data.code==200){
+            var teacherList=data.data;
+            var html=$("#teacherList");
+           for (var i = 0; i <teacherList.length ; i++) {
+               html.append('<div class="col-md-4"><a style="text-decoration: underline;" href="front_teacher_detail.html?id='+teacherList[i].id+'">'+teacherList[i].name+'</a></div>')
+           }
+
+       }
+    })
+
+
+</script>

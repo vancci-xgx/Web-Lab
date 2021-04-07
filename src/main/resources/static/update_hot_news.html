@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title> - 基本表单</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- 自定义js -->
+    <script src="js/content.js?v=1.0.0"></script>
+    <script src="js/wangEditor.min.js"></script>
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <script src="js/plugins/layer/layer.min.js"></script>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>修改热点新闻 </h5>
+                </div>
+                <div class="ibox-content">
+                    <div id="addNew" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">新闻标题:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">新闻内容: </label>
+                            <div class="col-sm-10">
+                                <span name="editor" id="editor"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button class="btn btn-primary" id="submit" type="submit">提交</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+
+    var token = localStorage.getItem('token');
+    var E = window.wangEditor;
+    var editor = new E('#editor');
+    editor.customConfig.uploadImgServer = '/admin/upload/addPic?source=1&token='+token;
+    editor.customConfig.uploadFileName = 'pic';
+    editor.customConfig.uploadImgMaxSize = 5 * 1024 * 1024,
+        editor.customConfig.uploadImgHooks = {
+            customInsert: function (insertImg, result, editor) {
+                var url = result.data;
+                insertImg(url);
+            }
+        };
+    editor.create();
+
+    var id =getQueryVariable('id');
+
+    $.get("/admin/getHotNew",{id:id,token:token},function (data) {
+      if (data.code==200){
+
+          //document.getElementById("title").value =data.data.title
+               $('#title').val(data.data.title);
+                editor.txt.html(data.data.content);
+      }
+    });
+
+
+
+    $('#submit').click(function () {
+        $("#submit").attr("disabled", true);
+        var title = $('#title').val();
+        var content = editor.txt.html();
+        var data={title:title,content:content,token:token,id:id};
+        $.post("admin/updateHotNews", data, function (data, status) {
+            if (data.code==200){
+                layer.msg('修改成功', {icon: 1});
+            }else {
+                layer.msg('发生未知错误,修改失败', {icon: 2});
+            }
+            $("#submit").attr("disabled", false);
+        });
+        }
+    );
+</script>
+
+
+</body>
+<style type="text/css">
+    .w-e-text-container {
+        height: 700px !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
+    }
+</style>
+</html>

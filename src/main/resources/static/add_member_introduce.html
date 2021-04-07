@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- 自定义js -->
+    <script src="js/content.js?v=1.0.0"></script>
+    <script src="js/wangEditor.min.js"></script>
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <script src="js/plugins/layer/layer.min.js"></script>
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>添加学生简介</h5>
+                </div>
+                <div class="ibox-content">
+                    <div id="addNew" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">姓名:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="memberName">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">照片:</label>
+                            <div class="col-sm-10">
+
+
+                                <label title="上传图片" for="memberPic" class="btn btn-primary">
+                                    <input type="file" accept="image/*"  name="pic" id="memberPic" class="hide"> 上传新图片 </label>
+                                <label id="box"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">简介: </label>
+                            <div class="col-sm-10">
+                                <span name="editor" id="editor"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button class="btn btn-primary" id="submit" type="submit">提交</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    var token = localStorage.getItem('token');
+    var E = window.wangEditor;
+    var editor = new E('#editor');
+   // editor.customConfig.uploadImgServer = '/admin/upload/addPic';
+    editor.customConfig.uploadFileName = 'pic';
+    editor.customConfig.uploadImgMaxSize = 5 * 1024 * 1024,
+        editor.customConfig.uploadImgHooks = {
+            customInsert: function (insertImg, result, editor) {
+                var url = result.data;
+                insertImg(url);
+            }
+        };
+    editor.create();
+
+
+    var memberPic="";
+
+    document.getElementById('memberPic').addEventListener('change', function (event) {
+        var $file = event.currentTarget;
+        var formData = new FormData();
+        var file = $file.files;
+        formData = new FormData();
+        formData.append('pic', file[0]);
+        $.ajax({
+            url: '/admin/upload/addPic?source=5&token='+token,
+            type: 'POST',
+            dataType: 'json',
+            data: formData,
+            contentType: false,
+            processData: false
+        })
+            .done(data => {
+                console.log(data);
+                $('#box').html("");
+                if (data.code!=200){
+                    layer.msg(data.msg, {icon: 2});
+                }else{
+                    memberPic=data.data;
+                    $('#box').append(`<div class="photo-item">
+            <img class="item-image" width="180px" height="280px" src="${data.data}"/>
+        </div>`);
+                }
+
+            })
+            .fail(data => {
+                console.log(data);
+            });
+    });
+
+    $('#submit').click(function () {
+            $("#submit").attr("disabled", true);
+            var memberName = $('#memberName').val();
+            var content = editor.txt.html();
+            var data={memberName:memberName,content:content,memberPic:memberPic};
+            $.post("admin/addMemberIntroduce?token="+token, data, function (data, status) {
+                if (data.code==200){
+                    layer.msg('添加成功', {icon: 1});
+                }else {
+                    layer.msg('发生未知错误,添加失败', {icon: 2});
+                }
+                $("#submit").attr("disabled", false);
+            });
+        }
+    );
+</script>
+
+
+</body>
+<style type="text/css">
+    .w-e-text-container {
+        height: 700px !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
+    }
+</style>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <!-- Data Tables -->
+    <link href="css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>普通用户管理 </h5>
+                </div>
+                <div class="ibox-content">
+
+                    <table class="table table-striped table-bordered table-hover dataTables-example">
+                        <thead>
+                        <tr>
+                            <th >账户姓名</th>
+                            <th >账号</th>
+                            <th >密码</th>
+                            <th >创建时间</th>
+                            <th>账号状态</th>
+                            <th >操作</th>
+                        </tr>
+                        </thead>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script src="js/jquery.min.js?v=2.1.4"></script>
+<script src="js/bootstrap.min.js?v=3.3.6"></script>
+
+
+
+<script src="js/plugins/jeditable/jquery.jeditable.js"></script>
+
+<!-- Data Tables -->
+<script src="js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
+<!-- 自定义js -->
+<script src="js/content.js?v=1.0.0"></script>
+<script src="js/plugins/layer/layer.min.js"></script>
+
+
+<!-- Page-Level Scripts -->
+<script>
+    var token = localStorage.getItem('token');
+    var table;
+    $(function () {
+        //封装相应的请求参数，这里获取页大小和当前页码
+        // var param = {};
+        // param.pagesize = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候,页大小
+        // param.start = data.start;//开始的记录序号
+        // param.draw = data.draw;//标记字段
+        // param.currentPage = (data.start) / data.length + 1;//当前页码
+
+        table=  $(".dataTables-example").DataTable({
+            info : true,
+            paging: true,
+            aLengthMenu : [10], //更改显示记录数选项
+            iDisplayLength : 10, //默认显示的记录数
+            // pageLength: 3, //每页显示3条数据
+            processing: false,   //显示加载提示,自行处理
+            searching: true,    //显示原生搜索
+            bSort: false,//排序
+            stripeClasses: ["odd", "even"], //为奇偶行加上样式，兼容不支持CSS伪类的场合
+            pagingType: "full_numbers", //分页样式：simple,simple_numbers,full,full_numbers
+            serverSide: true,   //开启服务器模式
+            bFilter: true,
+            ajax: function (data, callback, setting) {
+                var flag = data.draw;//标记字段
+                var pagesize = data.length;//当前页大小
+                var currentPage = Math.floor((data.start) / data.length )+ 1;//当前页码
+                var searchVal=data.search.value;
+
+                $.ajax({
+                    type: "GET",
+                    url: "admin/getUsers?code=0&current="+currentPage+"&size="+pagesize,
+                    cache: false, //禁用缓存
+                    data: {searchParam:searchVal,token:token}, //传入组装的参数
+                    dataType: "json",
+                    success: function (result) {
+                        var returnData = {};
+                        // returnData.draw = result.pageInfo.draw;//这里直接自行返回了draw计数器,应该由后台返回，没什么卵用！
+                        returnData.recordsTotal = result.data.total;//返回数据全部记录
+                        returnData.recordsFiltered = result.data.total;//后台不实现过滤功能，每次查询均视作全部结果
+                        returnData.data = result.data.records;//返回的数据列表
+                        //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
+                        callback(returnData);
+                    }
+                });
+            },
+            columns: [
+                { data: 'name',width: "300px"  },
+                { data: 'account',width: "100px" },
+                { data: 'passWord',width: "300px" },
+                { data: 'createTime',width: "255px" },
+                {data:function (row) {
+                   if (row.status==0){
+                       return "待审核";
+                   }else if (row.status==1){
+                            return "正常使用";
+                        }else if (row.status==2){
+                       return "禁止使用";
+                   }
+                    },width: "200px"},
+                { data: function (row) {
+                    var html ='';
+                    html+= '<a href="update_common_user.html?token='+token+'&id='+row.id+'" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i> 编辑</a>&nbsp;&nbsp;&nbsp;'
+                    html+='<button  onclick="del('+row.id+')" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i> 删除</button>&nbsp;&nbsp;&nbsp;'
+                     if (row.status==0){
+                         html+='<button  onclick="audit('+row.id+')" class="btn btn-sm btn-danger"> 通过审核</button>&nbsp;&nbsp;&nbsp;'
+                     }else if (row.status==1){
+                         html+=  '<button  onclick="forbid('+row.id+')" class="btn btn-sm btn-danger"> 禁用</button>'
+                     }else if(row.status==2){
+                         html+=  '<button  onclick="recover('+row.id+')" class="btn btn-sm btn-danger"> 恢复使用</button>'
+                     }
+                     return html;
+                         //+
+                            //'<button  onclick="del('+row.id+')" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i> 删除</button>&nbsp;&nbsp;&nbsp;'
+                //'<button  onclick="forbid('+row.id+')" class="btn btn-sm btn-danger"> 禁用</button>'
+                }}
+            ],
+
+        })
+
+    });
+    function audit(val) {
+        parent.layer.confirm('你确定要审核通过该账号？', {
+            btn: ['确定','取消'], //按钮
+            shade: false //不显示遮罩
+        }, function(){
+            $.post("/admin/auditUserAccount",{id:val,token:token,status:"1"},function (data) {
+                if (data.code==200){
+                    parent.layer.alert('审核成功,该账号可以使用！')
+                    table.draw( false );
+                }else{
+                    parent.layer.alert('发生错误,操作失败！')
+
+                }
+            })
+
+            //   parent.layer.msg('删除成功', {icon: 1});
+        }, function(){
+        });
+
+    }
+    function del(val){
+        parent.layer.confirm('你确定要删除该账号？', {
+            btn: ['删除','取消'], //按钮
+            shade: false //不显示遮罩
+        }, function(){
+            $.post("/admin/delUserAccount",{id:val,token:token},function (data) {
+                if (data.code==200){
+                    parent.layer.alert('删除成功！')
+                    table.draw( false );
+                }else{
+                    parent.layer.alert('发生错误,删除失败！')
+
+                }
+            })
+
+            //   parent.layer.msg('删除成功', {icon: 1});
+        }, function(){
+        });
+
+
+    }
+   function  recover(val) {
+
+           parent.layer.confirm('你确定要恢复该账号的正常使用权限？', {
+               btn: ['确定', '取消'], //按钮
+               shade: false //不显示遮罩
+           }, function () {
+               $.post("/admin/auditUserAccount", {id: val, token: token, status: "1"}, function (data) {
+                   if (data.code == 200) {
+                       parent.layer.alert('恢复成功！')
+                       table.draw(false);
+                   } else {
+                       parent.layer.alert('发生错误,操作失败！')
+
+                   }
+               })
+
+
+           }, function () {
+           });
+
+   }
+    function forbid(val){
+        parent.layer.confirm('你确定要禁用该账号？', {
+            btn: ['确定','取消'], //按钮
+            shade: false //不显示遮罩
+        }, function(){
+            $.post("/admin/auditUserAccount",{id:val,token:token,status:"2"},function (data) {
+                if (data.code==200){
+                    parent.layer.alert('禁用成功！')
+                    table.draw( false );
+                }else{
+                    parent.layer.alert('发生错误,操作失败！')
+
+                }
+            })
+
+
+        }, function(){
+        });
+
+
+    }
+
+</script>
+
+
+
+
+</body>
+
+</html>

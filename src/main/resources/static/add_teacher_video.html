@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- 自定义js -->
+    <script src="js/content.js?v=1.0.0"></script>
+    <script src="js/wangEditor.min.js"></script>
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <script src="js/plugins/layer/layer.min.js"></script>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>添加授课视频</h5>
+                </div>
+                <div class="ibox-content">
+                    <div id="addNew" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">授课导师:</label>
+                            <div class="col-sm-10">
+                                <select id="teacher" class="form-control m-b" name="teacher" style="width: 20%">
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">视频分类:</label>
+                            <div class="col-sm-10">
+                                <select id="videoClassify" class="form-control m-b" name="videoClassify" style="width: 20%">
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">视频标题:</label>
+                            <div class="col-sm-10">
+                                <input id="title" class="form-control m-b" name="title" >
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">视频地址(B站的iframe):</label>
+                            <div class="col-sm-10">
+                                <input id="videoIframe" class="form-control m-b" name="videoIframe" >
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button class="btn btn-primary" id="submit" type="submit">提交</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    var token = localStorage.getItem('token');
+
+    $(function () {
+       $.get("/admin/getTeacherList",{token:token},function (data) {
+       if (data.code==200){
+          for(var teacher of data.data){
+              $('#teacher').append('<option value='+teacher.id+'>'+teacher.name+'</option>')
+          }
+       }
+       });
+    });
+
+    $(function () {
+        $.get("/admin/getAllVideoClassify",{token:token},function (data) {
+            if (data.code==200){
+                for(var videoClassify of data.data){
+                    $('#videoClassify').append('<option value='+videoClassify.id+'>'+videoClassify.classifyName+'</option>')
+                }
+            }
+        });
+    });
+
+
+    $('#submit').click(function () {
+        $("#submit").attr("disabled", true);
+        var teacherId=$("select[id='teacher']").val();
+        var classifyId=$("select[id='videoClassify']").val();
+        var teacherName=$("#teacher option:selected").text();
+        var classifyName=$("#videoClassify option:selected").text();
+        var videoIframe=$("#videoIframe").val();
+        var title=$("#title").val();
+       var data=new FormData();
+        data.append("teacherId",teacherId);
+        data.append("teacherName",teacherName);
+        data.append("classifyId",classifyId);
+        data.append("classifyName",classifyName);
+        data.append("videoIframe",videoIframe);
+        data.append("title",title);
+
+        var index = layer.load(1, {
+            shade: [0.1,'#fff'], //0.1透明度的白色背景
+            time :60*1000*10
+        });
+        $.ajax({url:"admin/addTeacherVideo?token="+token,
+            data:data,
+            type : 'POST',
+            processData : false,
+            contentType : false,
+            dataType: "json",
+            success:function(data){
+                if (data.code==200){
+                    layer.msg('添加成功！', {icon: 1});
+                }else {
+                    layer.msg('发生错误,添加失败', {icon: 2});
+                }
+                layer.close(index);
+                $("#submit").attr("disabled", false);
+            }})
+
+
+        }
+    );
+</script>
+
+
+</body>
+<style type="text/css">
+    .w-e-text-container {
+        height: 700px !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
+    }
+</style>
+</html>

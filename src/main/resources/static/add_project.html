@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- 自定义js -->
+    <script src="js/content.js?v=1.0.0"></script>
+    <script src="js/wangEditor.min.js"></script>
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <script src="js/plugins/layer/layer.min.js"></script>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>添加项目</h5>
+                </div>
+                <div class="ibox-content">
+                    <div  class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">项目名称:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="projectName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">项目链接(需要加上http://):</label>
+                            <div class="col-sm-10">
+                                <input id="linkUrl" class="form-control m-b" name="linkUrl" >
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">项目说明（方法，原理，结果等）: </label>
+                            <div class="col-sm-10">
+                                <span name="introduce" id="introduce"></span>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button class="btn btn-primary" id="submit" type="submit">提交</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+
+
+    var token = localStorage.getItem('token');
+    var E = window.wangEditor;
+    var introduce = new E('#introduce');
+    introduce.customConfig.uploadImgServer = '/admin/upload/addPic?source=6&token='+token;
+    introduce.customConfig.uploadFileName = 'pic';
+    introduce.customConfig.uploadImgMaxSize = 5 * 1024 * 1024,
+        introduce.customConfig.uploadImgHooks = {
+            customInsert: function (insertImg, result, editor) {
+                var url = result.data;
+                insertImg(url);
+            }
+        };
+    introduce.create();
+
+
+
+
+    $('#submit').click(function () {
+        $("#submit").attr("disabled", true);
+        var projectName = $('#projectName').val();
+        var introduce_ = introduce.txt.html();
+        var linkUrl = $('#linkUrl').val();
+
+        var data=new FormData();
+        data.append("projectName",projectName);
+        data.append("introduce",introduce_);
+        data.append("linkUrl",linkUrl);
+        var index = layer.load(1, {
+            shade: [0.1,'#fff'], //0.1透明度的白色背景
+            time :60*1000*10
+        });
+        $.ajax({url:"admin/addProjectPresentation?token="+token,
+            data:data,
+            type : 'POST',
+            processData : false,
+            contentType : false,
+            dataType: "json",
+            success:function(data){
+                if (data.code==200){
+                    layer.msg('添加成功', {icon: 1});
+                }else {
+                    layer.msg('发生未知错误,添加失败', {icon: 2});
+                }
+                layer.close(index);
+                $("#submit").attr("disabled", false);
+            }})
+
+        }
+    );
+</script>
+
+
+</body>
+<style type="text/css">
+    .w-e-text-container {
+        height: 700px !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
+    }
+</style>
+</html>

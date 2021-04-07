@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>公告</title>
+    <link rel="import" href="top.html">
+    <link rel="import" href="footer.html">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Learn Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+    <link href="css/bootstrap-3.1.1.min.css" rel='stylesheet' type='text/css' />
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Custom Theme files -->
+    <link rel="stylesheet" href="css/jquery.countdown.css" />
+    <!----font-Awesome----->
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/style1.css" rel='stylesheet' type='text/css' />
+
+    <!----font-Awesome----->
+    <script>
+        $(document).ready(function(){
+            $(".dropdown").hover(
+                function() {
+                    $('.dropdown-menu', this).stop( true, true ).slideDown("fast");
+                    $(this).toggleClass('open');
+                },
+                function() {
+                    $('.dropdown-menu', this).stop( true, true ).slideUp("fast");
+                    $(this).toggleClass('open');
+                }
+            );
+        });
+        $(document).ready(function () {
+            $('#top1').load('top.html');
+            $('#footer').load('footer.html');
+        });
+    </script>
+</head>
+<body>
+<div id="top1"></div>
+<!-- banner -->
+<div class="courses_banner">
+    <div class="container">
+
+    </div>
+</div>
+<!-- //banner -->
+<div class="features" id="board">
+<!--    <div class="container">-->
+<!--        <h1>Career</h1>-->
+<!--        <h2>Mission</h2>-->
+<!--        <p>"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"</p>-->
+<!--        <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>-->
+<!--        <p>"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat."</p>-->
+<!--    </div>-->
+</div>
+<div class="footer" id="footer">
+    <div class="container">
+        <div>
+            <address style="color: #2b99d9">
+                <h3>联系我们</h3>
+
+                <span>所在地址:江西省南昌市华东交通大学软件学院</span></br>
+                <span>邮编：330013</span></br>
+
+                <abbr>Email : <a href="mailto:zhanghongbin@whu.edu.cn">zhanghongbin@whu.edu.cn</a> </abbr>
+            </address>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+    var id=getQueryVariable("id");
+    $.get("/front/getBulletinBoard",{id:id},function (data) {
+        if (data.code==200){
+            var board=data.data;
+            var board_html=$("#board");
+            board_html.append('<div class="container">' +
+                '<h1 style="margin-bottom:0px ;color: #005284">'+board.title+'</h1>'+
+                '<p style="text-align: center;border-bottom:1px solid #CECECE;border-top:1px solid #CECECE;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作者:'+board.author+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布时间:'+board.createTime+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;浏览量:'+board.pageView+'</p>'+
+                    '<p>'+board.content+'</p>'+
+                '</div>');
+        }
+
+
+    })
+
+
+
+
+</script>

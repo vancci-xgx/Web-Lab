@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title> 登录</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="middle-box text-center loginscreen  animated fadeInDown">
+        <div>
+        <div>
+
+            <h3>欢迎使用后台管理</h3>
+
+                <div class="form-group">
+                    <input type="account" id="account" class="form-control" placeholder="用户名" required="">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" class="form-control" placeholder="密码" required="">
+                </div>
+                <button type="submit" id="submit" class="btn btn-primary block full-width m-b">登 录</button>
+
+
+
+        </div>
+    </div>
+    </div>
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="js/plugins/layer/layer.min.js"></script>
+    <script>
+        // $(function () {
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "/admin/hasToken",
+        //         cache: false, //禁用缓存
+        //         dataType: "json",
+        //         headers:{
+        //             token:localStorage.getItem("token")//将token放到请求头中
+        //         },
+        //         success: function (result) {
+        //
+        //         }
+        //     });
+        // });
+        $('#submit').click(function () {
+            var account = $('#account').val();
+            console.log(account);
+            var passWord = $('#password').val();
+            $.post("admin/login", {account:account,passWord:passWord}, function (data, status,request) {
+                if (data.code==200){
+                    localStorage.setItem('token',data.data);
+                    window.location.href="/labWebAdmin.html?token="+data.data;
+                }else {
+                    layer.msg('登录失败', {icon: 2});
+                  //  layer.msg('发生未知错误,添加失败', {icon: 2});
+                }
+                $("#submit").attr("disabled", false);
+            });
+
+        });
+
+    </script>
+    
+
+</body>
+
+</html>

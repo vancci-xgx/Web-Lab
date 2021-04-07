@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>新闻中心</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="import" href="top.html">
+    <link rel="import" href="footer.html">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Learn Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+    <link href="css/bootstrap-3.1.1.min.css" rel='stylesheet' type='text/css' />
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Custom Theme files -->
+    <link rel="stylesheet" href="css/jquery.countdown.css" />
+    <!----font-Awesome----->
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/style1.css" rel='stylesheet' type='text/css' />
+
+    <!----font-Awesome----->
+    <script>
+        $(document).ready(function(){
+            $(".dropdown").hover(
+                function() {
+                    $('.dropdown-menu', this).stop( true, true ).slideDown("fast");
+                    $(this).toggleClass('open');
+                },
+                function() {
+                    $('.dropdown-menu', this).stop( true, true ).slideUp("fast");
+                    $(this).toggleClass('open');
+                }
+            );
+        });
+        $(document).ready(function () {
+            $('#top1').load('top.html');
+            $('#footer').load('footer.html');
+        });
+    </script>
+</head>
+<body>
+<div id="top1"></div>
+<!-- banner -->
+<div class="courses_banner">
+    <div class="container">
+    </div>
+</div>
+<!-- //banner -->
+<div class="features" id="hot_new">
+
+</div>
+<div class="footer" id="footer">
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+    var id=getQueryVariable("id");
+    $.get("/front/getHotNew",{id:id},function (data) {
+        if (data.code==200){
+            var hot_new=data.data;
+            var hot_new_html=$("#hot_new");
+            hot_new_html.append('<div class="container">' +
+                '<h1 style="margin-bottom:0px ;color: #005284">'+hot_new.title+'</h1>'+
+                '<p style="text-align: center;border-bottom:1px solid #CECECE;border-top:1px solid #CECECE;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作者:'+hot_new.author+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布时间:'+hot_new.createTime+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;浏览量:'+hot_new.pageView+'</p>'+
+                    '<p>'+hot_new.content+'</p>'+
+                '</div>');
+        }
+
+
+    })
+
+
+
+
+</script>

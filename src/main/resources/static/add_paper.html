@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- 自定义js -->
+    <script src="js/content.js?v=1.0.0"></script>
+    <script src="js/wangEditor.min.js"></script>
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <script src="js/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+    <script src="js/plugins/layer/layer.min.js"></script>
+    <script src="js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>添加论文赏析</h5>
+                </div>
+                <div class="ibox-content">
+                    <div  class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">题目(论文名):</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="title">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">会议名(期刊名):</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="journalName">
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="data_4">
+                            <label class="col-sm-2 control-label">选择月份:</label>
+                            <div class="col-sm-10">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" class="form-control" id="publicationTime"  >
+                            </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">文件上传: </label>
+                            <div class="col-sm-10">
+                                <input name="file" id="file" type="file">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button class="btn btn-primary" id="submit" type="submit">提交</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    var token = localStorage.getItem('token');
+    function isDate(date) {
+        if (date=="") return false;
+        var reg = /^(\d{4})-(\d{2})$/;
+        var suc = reg.test(date);
+        return suc;
+    }
+    $('#data_4 .input-group.date').datepicker({
+        format : 'yyyy-mm',
+        minViewMode: 1,
+        keyboardNavigation: false,
+        forceParse: false,
+        autoclose: true,
+        todayHighlight: true,
+    });
+
+    $('#submit').click(function () {
+        $("#submit").attr("disabled", true);
+        var title = $('#title').val();
+        var journalName = $('#journalName').val();
+        var publicationTime = $('#publicationTime').val();
+       var flag= isDate(publicationTime);
+       if (!flag){
+           layer.msg("请输入正确的日期！", {icon: 2});
+           $("#submit").attr("disabled", false);
+           return;
+       }
+        var file=$('#file')[0].files[0];
+        if (file==null){
+            layer.msg("没有上传文件", {icon: 2});
+            $("#submit").attr("disabled", false);
+            return;
+        }
+        var data=new FormData();
+        data.append("title",title);
+        data.append("journalName",journalName);
+        data.append("publicationTime",publicationTime);
+        data.append("file",file);
+        $.ajax({url:"admin/addPaperAppreciation?token="+token,
+            data:data,
+            type : 'POST',
+            processData : false,
+            contentType : false,
+            dataType: "json",
+            success:function(data){
+                if (data.code==200){
+                    layer.msg(data.data, {icon: 1});
+                }else {
+                    layer.msg(data.data, {icon: 2});
+                }
+                $("#submit").attr("disabled", false);
+            }})
+
+        }
+    );
+</script>
+
+
+</body>
+<style type="text/css">
+    .w-e-text-container {
+        height: 700px !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
+    }
+</style>
+</html>
