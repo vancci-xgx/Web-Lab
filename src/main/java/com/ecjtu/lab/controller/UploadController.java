@@ -48,11 +48,11 @@ public class UploadController {
         String generateAddr = UploadUtil.generateAddr(multipartFile);
         String addr = CommonConstant.UPLOAD_ADDR+"pic/"+ generateAddr;
         File file = new File(addr);
-        if (!file.exists()){
+        if (!file.getParentFile().exists()){
             file.getParentFile().mkdirs();
         }
         try {
-            multipartFile.transferTo(file);
+            multipartFile.transferTo(file.getAbsoluteFile());
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseUtil.getErrorRes("文件上传失败!");

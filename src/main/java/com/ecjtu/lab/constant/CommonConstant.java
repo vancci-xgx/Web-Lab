@@ -18,4 +18,5 @@ public class CommonConstant {
     public final static String FRONT_TEACHER_DTO_LIST="FRONT_TEACHER_DTO_LIST";
     public final static String FRONT_MEMBER_LIST="FRONT_MEMBER_LIST";
     public final static String FRONT_CASE_LIST="FRONT_CASE_LIST";
+    public final static String LAB_INTRODUCE="LAB_INTRODUCE";
 }
