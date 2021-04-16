@@ -6,7 +6,10 @@ import com.ecjtu.lab.entity.ResponseMsg;
 import com.ecjtu.lab.service.UploadPictureService;
 import com.ecjtu.lab.tools.ResponseUtil;
 import com.ecjtu.lab.tools.UploadUtil;
+import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +31,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/admin/upload")
+@Log
 public class UploadController {
 
     @Resource
@@ -52,7 +56,7 @@ public class UploadController {
             file.getParentFile().mkdirs();
         }
         try {
-            multipartFile.transferTo(file.getAbsoluteFile());
+            multipartFile.transferTo(file);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseUtil.getErrorRes("文件上传失败!");
