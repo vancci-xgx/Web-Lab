@@ -8,6 +8,7 @@ import com.ecjtu.lab.entity.User;
 import com.ecjtu.lab.enums.UserAuthEnum;
 import com.ecjtu.lab.mapper.UserMapper;
 import com.ecjtu.lab.service.UserService;
+import com.ecjtu.lab.tools.MD5Util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User adminLogin(String account, String passWord) {
+        passWord= MD5Util.getMD5(passWord);
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("account", account).eq("passWord", passWord).eq("auth", UserAuthEnum.ADMIN.getCode()));
         return user;
     }

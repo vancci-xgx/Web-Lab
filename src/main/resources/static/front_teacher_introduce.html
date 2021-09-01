@@ -77,7 +77,7 @@ $(document).ready(function () {
             var teacherList=data.data;
             var html=$("#teacherList");
            for (var i = 0; i <teacherList.length ; i++) {
-               html.append('<div class="col-md-4"><a style="text-decoration: underline;" href="front_teacher_detail.html?id='+teacherList[i].id+'">'+teacherList[i].name+'</a></div>')
+               html.append('<div class="col-md-4" style="padding-bottom: 10px"><a style="text-decoration: underline;" href="front_teacher_detail.html?id='+teacherList[i].id+'">'+teacherList[i].name+'</a></div>')
            }
 
        }

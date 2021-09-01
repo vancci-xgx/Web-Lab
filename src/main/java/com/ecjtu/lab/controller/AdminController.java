@@ -451,7 +451,7 @@ public class AdminController {
         return res;
     }
 
-    @GetMapping("/delMemberIntroduce")
+    @PostMapping("/delMemberIntroduce")
     public ResponseMsg delMemberIntroduce(@RequestParam("id") Long id,
                                           HttpServletRequest request) {
         boolean flag = memberIntroduceService.delMemberIntroduce(id);

@@ -7,29 +7,29 @@
     <link rel="import" href="top.html">
     <link rel="import" href="footer.html">
 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="keywords" content="Learn Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
-Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
-    <link href="css/bootstrap-3.1.1.min.css" rel='stylesheet' type='text/css' />
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"/>
+    <link href="css/bootstrap-3.1.1.min.css" rel='stylesheet' type='text/css'/>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <!-- Custom Theme files -->
-    <link rel="stylesheet" href="css/jquery.countdown.css" />
+    <link rel="stylesheet" href="css/jquery.countdown.css"/>
     <!----font-Awesome----->
     <link href="css/font-awesome.css" rel="stylesheet">
-    <link href="css/style1.css" rel='stylesheet' type='text/css' />
+    <link href="css/style1.css" rel='stylesheet' type='text/css'/>
 
     <!----font-Awesome----->
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             $(".dropdown").hover(
-                function() {
-                    $('.dropdown-menu', this).stop( true, true ).slideDown("fast");
+                function () {
+                    $('.dropdown-menu', this).stop(true, true).slideDown("fast");
                     $(this).toggleClass('open');
                 },
-                function() {
-                    $('.dropdown-menu', this).stop( true, true ).slideUp("fast");
+                function () {
+                    $('.dropdown-menu', this).stop(true, true).slideUp("fast");
                     $(this).toggleClass('open');
                 }
             );
@@ -56,32 +56,36 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </body>
 </html>
 <script type="text/javascript">
-    function getQueryVariable(variable)
-    {
+    function getQueryVariable(variable) {
         var query = window.location.search.substring(1);
         var vars = query.split("&");
-        for (var i=0;i<vars.length;i++) {
+        for (var i = 0; i < vars.length; i++) {
             var pair = vars[i].split("=");
-            if(pair[0] == variable){return pair[1];}
+            if (pair[0] == variable) {
+                return pair[1];
+            }
         }
-        return(false);
+        return (false);
     }
-    var id=getQueryVariable("id");
-    $.get("/front/getTeacherIntroduce",{id:id},function (data) {
-        if (data.code==200){
-            var teacherInfo=data.data;
-            var teacher_html=$("#teacher");
-            teacher_html.append('<div class="container">' +
-                '<h1 style="margin-bottom:0px ;color: #005284" class="title1">'+teacherInfo.name+'</h1>'+
-                '<p style="text-align: center;border-bottom:1px solid #CECECE;border-top:1px solid #CECECE;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布时间:'+teacherInfo.createTime+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;访问次数:'+teacherInfo.pageView+'</p>'
-                   +'<h1><img src="'+teacherInfo.picAddress+'"></h1>'  +teacherInfo.introduce+
-                '</div>');
+
+    var id = getQueryVariable("id");
+    $.get("/front/getTeacherIntroduce", {id: id}, function (data) {
+        if (data.code == 200) {
+            var teacherInfo = data.data;
+            var teacher_html = $("#teacher");
+            var genHtml='<div class="container">' +
+                '<h1 style="margin-bottom:0px ;color: #005284" class="title1">' + teacherInfo.name + '</h1>' +
+                '<p style="text-align: center;border-bottom:1px solid #CECECE;border-top:1px solid #CECECE;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布时间:' + teacherInfo.createTime + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;访问次数:' + teacherInfo.pageView + '</p>';
+
+                if(teacherInfo.picAddress!=''&&teacherInfo.picAddress!=null&&teacherInfo.picAddress!=undefined){
+                    genHtml+= '<h1  style="text-align: center;"><img height="30%" width="30%" src="' + teacherInfo.picAddress + '"></h1>';
+                }
+                genHtml+= teacherInfo.introduce + '</div>';
+            teacher_html.append(genHtml);
         }
 
 
     })
-
-
 
 
 </script>

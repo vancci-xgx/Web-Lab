@@ -15,8 +15,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @TableName("lab_introduce")
 public class LabIntroduce implements Serializable {
-    @TableField("id")
-    private String id;
+    @TableField("introduce_id")
+    private String introduceId;
     @TableField("introduce")
     private String introduce;
 }

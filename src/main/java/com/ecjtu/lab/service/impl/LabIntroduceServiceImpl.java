@@ -26,7 +26,7 @@ public class LabIntroduceServiceImpl implements LabIntroduceService {
     @Override
     public void updateIntroduce(String introduce) {
         //该表只有一条数据
-        LabIntroduce labIntroduce = labIntroduceMapper.selectOne(new QueryWrapper<LabIntroduce>().eq("id", "1"));
+        LabIntroduce labIntroduce = labIntroduceMapper.selectOne(new QueryWrapper<LabIntroduce>().eq("introduce_id", "1"));
         if (labIntroduce == null) {
             labIntroduceMapper.insert( introduce);
         } else {
@@ -43,7 +43,7 @@ public class LabIntroduceServiceImpl implements LabIntroduceService {
         if (flag){
             labIntroduce=  (LabIntroduce)redisUtil.get(CommonConstant.LAB_INTRODUCE);
         }else {
-            labIntroduce=labIntroduceMapper.selectOne(new QueryWrapper<LabIntroduce>().eq("id", "1"));
+            labIntroduce=labIntroduceMapper.selectOne(new QueryWrapper<LabIntroduce>().eq("introduce_id", "1"));
             redisUtil.set(CommonConstant.LAB_INTRODUCE, labIntroduce);
         }
         return labIntroduce;
